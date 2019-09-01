@@ -2,6 +2,7 @@ defmodule Upvest.Client do
   # TODO: support user config of the timeout and underlying http client
   alias Upvest.Authentication.{KeyAuth, OAuth}
   alias __MODULE__
+  alias Upvest.Utils
 
   # API version is the currently supported API version
   @api_version "1.0"
@@ -39,13 +40,22 @@ defmodule Upvest.Client do
     %__MODULE__{auth: auth, base_url: base_url}
   end
 
-  @spec url(client :: Client.t(), path :: binary) :: binary
-  def url(_client = %Client{base_url: base_url}, path) do
-    Path.join(base_url, versioned_url(path)) <> "/"
+  @spec build_url(Client.t(), binary) :: binary
+  def build_url(_client = %Client{base_url: base_url}, path) do
+    URI.merge(URI.parse(base_url), versioned_url(path))
+  end
+
+  @spec build_url(Client.t(), binary, map) :: binary
+  def build_url(_client = %Client{base_url: base_url}, path, data) do
+    query_params = URI.encode_query(data)
+    url = URI.merge(URI.parse(base_url), versioned_url(path)) 
+    "#{url}?#{query_params}"
   end
 
   @spec versioned_url(path :: binary) :: binary
   def versioned_url(path) do
-    Path.join(@api_version, path) <> "/"
+    # missing trailing slash results in 404 on some urls, /tenancy/users
+    path1 = Path.join(@api_version, path)
+    if String.ends_with?(path, "/"), do: path1 <> "/", else: path1
   end
 end

@@ -50,9 +50,9 @@ defmodule Upvest.API do
         @doc """
         Delete a(n) #{__MODULE__ |> to_string |> String.split(".") |> List.last()}
         """
-        def delete(id, data \\ [], client) when is_bitstring(id) do
+        def delete(id, client) when is_bitstring(id) do
           resource_url = Path.join(endpoint(), id)
-          request(:delete, resource_url, data, client)
+          request(:delete, resource_url, %{}, client)
         end
       end
     end
