@@ -3,6 +3,8 @@ defmodule Upvest.APIConnectionError do
   Failure to connect to the Upvest API.
   Network issues, timeouts etc
   """
+  @type t :: %__MODULE__{}
+
   defexception type: "api_connection_error",
                message: nil,
                code: nil
