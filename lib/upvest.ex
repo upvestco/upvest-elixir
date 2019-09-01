@@ -17,26 +17,53 @@ defmodule Upvest do
 
   @base_headers [
     {"User-Agent", @useragent},
-    {"Content-Type", "application/json"},
+    # {"Content-Type", "application/json"},
     {"Accept", "application/json"}
   ]
+
+  @type error ::
+          APIError.t()
+          | APIConnectionError.t()
+          | AuthenticationError.t()
+          | InvalidRequestError.t()
+          | PermissionError.t()
+  # TODO (yao): define more specific response type
+  @type response :: {:ok, any()} | {:error, error}
 
   def version do
     @client_version
   end
 
-  defp get_headers(client, action, endpoint, data) do
-    AuthProvider.get_headers(client.auth, action, endpoint, data)
-    |> Map.merge(Map.new(@base_headers))
-    |> Map.merge(client.headers)
+
+  defp get_headers(client = %Client{auth: auth}, action, endpoint, data) do
+    cond do
+      is_nil(client.auth) ->
+        Map.new(@base_headers) |> Map.merge(client.headers)
+      true ->
+        AuthProvider.get_headers(auth, action, endpoint, data)
+        |> Map.merge(Map.new(@base_headers))
+        |> Map.merge(client.headers)
+    end
   end
 
   def request(action, endpoint, data, client) do
-    url = Client.url(client, endpoint)
     headers = get_headers(client, action, endpoint, data)
+    request_url = url(action, endpoint, data, client)
 
-    HTTPoison.request(action, url, Poison.encode!(data), headers)
+    HTTPoison.request(action, request_url, encode_body(data, client.headers), headers)
     |> handle_response
+  end
+
+  defp encode_body(data, %{"Content-Type": "application/x-www-form-urlencoded"}) do
+    URI.encode_query(data)
+  end
+
+  defp encode_body(data, _) do
+    Poison.encode!(data)
+  end
+
+  defp url(_action, endpoint, _data, client) do
+    Client.build_url(client, endpoint)
   end
 
   # TODO: add headers to error

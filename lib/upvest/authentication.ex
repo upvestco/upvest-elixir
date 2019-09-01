@@ -50,7 +50,11 @@ defimpl Upvest.AuthProvider, for: Upvest.Authentication.KeyAuth do
 end
 
 defmodule Upvest.Authentication.OAuth do
-  alias Upvest.{Client, Utils}
+  defstruct [:client_id, :client_secret, :username, :password]
+end
+
+defimpl Upvest.AuthProvider, for: Upvest.Authentication.OAuth do
+  alias Upvest.Client
   import Upvest, only: [request: 4]
 
   # urlencodeheader is the content-type header for OuAth2
@@ -59,19 +63,17 @@ defmodule Upvest.Authentication.OAuth do
   @grant_type "password"
   @scope "read write echo transaction"
 
-  defstruct [:clientid, :client_secret, :username, :password]
-
   def get_headers(auth, _method, _path, _body) do
     access_token = get_access_token(auth)
 
     # Retrieve and return OAuth token
     %{
-      Authorization: "Bearer #{access_token}",
+      "Authorization": "Bearer #{access_token}",
       "Content-Type": "application/json"
     }
   end
 
-  def get_access_token(auth) do
+  defp get_access_token(auth) do
     params = %{
       grant_type: @grant_type,
       scope: @scope,
@@ -86,9 +88,7 @@ defmodule Upvest.Authentication.OAuth do
       "Cache-Control": "no-cache"
     }
 
-    query_params = Utils.encode(params)
-    url = "#{@oauth_path}?#{query_params}"
-
-    request(:post, url, %{}, %{Client.new() | headers: headers})
+    {:ok, resp} = request(:post, @oauth_path, params, %{Client.new() | headers: headers})
+    resp["access_token"]
   end
 end
