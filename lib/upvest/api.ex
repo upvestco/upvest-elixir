@@ -35,14 +35,51 @@ defmodule Upvest.API do
 
       if :list in unquote(opts) do
         @doc """
-        List all #{__MODULE__ |> to_string |> String.split(".") |> List.last()}s
+        List all #{__MODULE__ |> to_string |> String.split(".") |> List.last()}
+        #TODO: support configurable page size
         """
-        def list(pagination_opts, client) when is_list(pagination_opts) do
-          request(:get, endpoint(), pagination_opts, client)
+        def list(count, client) do
+          results = list_n(endpoint(), count, client, [])
+          {:ok, results}
+        end
+
+        defp list_n(url, count, client, acc) do
+          {:ok, resp} = request(:get, url, %{}, client)
+          next = Map.get(resp, "next")
+
+          case is_nil(next) or length(acc) >= count do
+            true ->
+              acc
+
+            _ ->
+              uri = URI.parse(next)
+              params = Map.put(URI.decode_query(uri.query), :page_size, 100)
+              next_url = URI.parse(next).path |> String.slice(4..-1)
+              next_url = "#{next_url}?#{URI.encode_query(params)}"
+              list_n(next_url, count, client, acc ++ resp["results"])
+          end
         end
 
         def list(client) do
-          request(:get, endpoint(), %{}, client)
+          results = list(endpoint(), client, [])
+          {:ok, results}
+        end
+
+        defp list(url, client, acc) do
+          {:ok, resp} = request(:get, url, %{}, client)
+          next = Map.get(resp, "next")
+
+          case is_nil(next) do
+            true ->
+              acc
+
+            _ ->
+              uri = URI.parse(next)
+              params = Map.put(URI.decode_query(uri.query), :page_size, 100)
+              next_url = URI.parse(next).path |> String.slice(4..-1)
+              next_url = "#{next_url}?#{URI.encode_query(params)}"
+              list(next_url, client, acc ++ resp["results"])
+          end
         end
       end
 
