@@ -7,5 +7,5 @@ defmodule Upvest.AuthenticationError do
   defexception type: "authentication_error",
                message: nil,
                code: 401,
-               errors: nil
+               details: nil
 end

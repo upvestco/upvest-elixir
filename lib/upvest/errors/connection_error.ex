@@ -7,5 +7,6 @@ defmodule Upvest.APIConnectionError do
 
   defexception type: "api_connection_error",
                message: nil,
-               code: nil
+               code: nil,
+               details: nil
 end

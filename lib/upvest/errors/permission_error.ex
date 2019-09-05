@@ -6,5 +6,6 @@ defmodule Upvest.PermissionError do
 
   defexception type: "permission_error",
                message: nil,
-               code: 403
+               code: 403,
+               details: nil
 end

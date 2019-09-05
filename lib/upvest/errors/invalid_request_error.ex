@@ -9,5 +9,5 @@ defmodule Upvest.InvalidRequestError do
   defexception type: "invalid_request_error",
                message: nil,
                code: 400,
-               errors: nil
+               details: nil
 end

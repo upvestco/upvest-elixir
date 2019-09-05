@@ -7,5 +7,5 @@ defmodule Upvest.APIError do
 
   @type t :: %__MODULE__{}
 
-  defexception type: "api_error", message: nil, code: nil
+  defexception type: "api_error", message: nil, code: nil, details: nil
 end
