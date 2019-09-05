@@ -47,8 +47,12 @@ defmodule Upvest do
     |> handle_response
   end
 
-  defp handle_response({:ok, %{body: body, status_code: code}})
-       when code in [200, 201] do
+  # delete endpoint returns 204 No Content 
+  defp handle_response({:ok, %{status_code: 204}}) do
+    {:ok, nil}
+  end
+
+  defp handle_response({:ok, %{body: body, status_code: code}}) when code in [200, 201] do
     {:ok, parse_response_body(body)}
   end
 
