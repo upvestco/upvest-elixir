@@ -34,65 +34,45 @@ defmodule Upvest do
     @client_version
   end
 
-
-  defp get_headers(client = %Client{auth: auth}, action, endpoint, data) do
-    cond do
-      is_nil(client.auth) ->
-        Map.new(@base_headers) |> Map.merge(client.headers)
-      true ->
-        AuthProvider.get_headers(auth, action, endpoint, data)
-        |> Map.merge(Map.new(@base_headers))
-        |> Map.merge(client.headers)
-    end
-  end
-
   def request(action, endpoint, data, client) do
     headers = get_headers(client, action, endpoint, data)
-    request_url = url(action, endpoint, data, client)
+    request_url = Client.build_url(client, endpoint)
 
-    HTTPoison.request(action, request_url, encode_body(data, client.headers), headers)
+    # timeout here is connection timeout
+    # actual http response waiting timeout is recv_timeout
+    options = [timeout: 50_000, recv_timeout: client.timeout]
+    body = encode_body(data, client.headers)
+
+    HTTPoison.request(action, request_url, body, headers, options)
     |> handle_response
   end
 
-  defp encode_body(data, %{"Content-Type": "application/x-www-form-urlencoded"}) do
-    URI.encode_query(data)
-  end
-
-  defp encode_body(data, _) do
-    Poison.encode!(data)
-  end
-
-  defp url(_action, endpoint, _data, client) do
-    Client.build_url(client, endpoint)
-  end
-
-  # TODO: add headers to error
-  defp handle_response({:ok, %{body: body, status_code: code, headers: _headers}})
+  defp handle_response({:ok, %{body: body, status_code: code}})
        when code in [200, 201] do
     {:ok, parse_response_body(body)}
   end
 
-  defp handle_response({:ok, %{body: body, status_code: code, headers: _headers}} = _req) do
-    response = parse_response_body(body)
-    message = Map.get(response, "error")
-    errors = Map.get(response, "errors")
+  defp handle_response({:ok, %{body: body, status_code: code}} = _req) do
+    response = Map.get(parse_response_body(body), "error")
+    message = Map.get(response, "message")
+    details = Map.get(response, "details")
 
     error_struct =
       case code do
         code when code in [400, 422, 404] ->
-          %InvalidRequestError{errors: errors, code: code}
+          %InvalidRequestError{}
 
         401 ->
-          %AuthenticationError{errors: errors}
+          %AuthenticationError{}
 
         403 ->
-          %PermissionError{message: message}
+          %PermissionError{}
 
         _ ->
-          %APIError{message: message}
+          %APIError{}
       end
 
-    {:error, %{error_struct | code: code, message: message}}
+    {:error, %{error_struct | code: code, message: message, details: details}}
   end
 
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}) do
@@ -101,5 +81,25 @@ defmodule Upvest do
 
   defp parse_response_body(body) do
     Poison.decode!(body)
+  end
+
+  defp get_headers(client = %Client{auth: auth}, action, endpoint, data) do
+    cond do
+      is_nil(client.auth) ->
+        Map.new(@base_headers) |> Map.merge(client.headers)
+
+      true ->
+        AuthProvider.get_headers(auth, action, endpoint, data)
+        |> Map.merge(Map.new(@base_headers))
+        |> Map.merge(client.headers)
+    end
+  end
+
+  defp encode_body(data, %{"Content-Type": "application/x-www-form-urlencoded"}) do
+    URI.encode_query(data)
+  end
+
+  defp encode_body(data, _) do
+    Poison.encode!(data)
   end
 end
