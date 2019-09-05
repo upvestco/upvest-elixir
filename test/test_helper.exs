@@ -1,3 +1,4 @@
+HTTPoison.start()
 ExUnit.start()
 Envy.auto_load()
 
