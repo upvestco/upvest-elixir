@@ -33,8 +33,6 @@ defmodule Upvest.MixProject do
       {:poison, "~> 4.0"},
       {:dialyxir, "~> 0.5", only: :dev, runtime: false},
       # Test
-      {:exvcr, "~> 0.10", only: :test, runtime: false},
-      {:meck, "~> 0.8", only: :test, runtime: false},
       {:envy, "~> 1.1.1", only: [:dev, :test], runtime: false},
       # Docs      
       {:ex_doc, "~> 0.21.1", only: :dev, runtime: false},
