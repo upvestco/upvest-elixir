@@ -5,10 +5,10 @@ Envy.auto_load()
 defmodule Upvest.TestHelper do
   alias Upvest.Client
   alias Upvest.Authentication.{KeyAuth, OAuth}
-  
+
   def random_string(length \\ 32) do
     characters = Enum.to_list(?a..?z) ++ Enum.to_list(?0..?9)
-    
+
     Enum.map(1..length, fn _ -> Enum.random(characters) end)
     |> to_string
   end

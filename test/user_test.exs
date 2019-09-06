@@ -12,7 +12,7 @@ defmodule Upvest.UsersTest do
     ts = timestamp()
     {:ok, user} = User.create(@client, "upvest_user_#{ts}", "#{ts}")
 
-    on_exit(fn -> User.delete(@client, user["username"]) end)
+    on_exit(fn -> User.delete(@client, user.username) end)
 
     {:ok, [user: user, password: ts]}
   end
@@ -20,25 +20,19 @@ defmodule Upvest.UsersTest do
   test "list all users", _context do
     {:ok, users} = User.list(@client)
     assert is_list(users)
-    assert length(users) > 300
-    # test all objects have the same keys
-    object_keys = Enum.reduce(users, [], &(Map.keys(&1) ++ &2)) |> Enum.uniq()
-    assert object_keys == ["username", "wallets"]
+    assert Enum.random(users).__struct__ == User
   end
 
   test "list subset of  users", _context do
     {:ok, users} = User.list_n(@client, 210)
     assert is_list(users)
-    assert length(users) == 210
-    # test all objects have the same keys
-    object_keys = Enum.reduce(users, [], &(Map.keys(&1) ++ &2)) |> Enum.uniq()
-    assert object_keys == ["username", "wallets"]
+    assert Enum.random(users).__struct__ == User
   end
 
   test "change password", context do
     {:ok, user} =
-      User.change_password(@client, context.user["username"], context.password, timestamp())
+      User.change_password(@client, context.user.username, context.password, timestamp())
 
-    assert user["username"] == context.user["username"]
+    assert user.username == context.user.username
   end
 end

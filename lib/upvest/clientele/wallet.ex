@@ -1,5 +1,6 @@
 defmodule Upvest.Clientele.Wallet do
   use Upvest.API, [:list, :retrieve]
+  alias Upvest.Clientele.Wallet.Signature
 
   defstruct [:address, :balances, :id, :index, :protocol, :status]
 
@@ -16,7 +17,10 @@ defmodule Upvest.Clientele.Wallet do
   @spec create(Client.t(), binary, binary, non_neg_integer(), atom()) :: Upvest.response()
   def create(client, asset_id, password, index \\ 0, type \\ :encrypted) do
     params = %{asset_id: asset_id, password: password, index: index, type: type}
-    request(:post, endpoint(), params, client)
+
+    with {:ok, resp} <- request(:post, endpoint(), params, client) do
+      {:ok, to_struct(resp, __MODULE__)}
+    end
   end
 
   @doc """
@@ -34,6 +38,17 @@ defmodule Upvest.Clientele.Wallet do
       output_format: output_format
     }
 
-    request(:post, url, params, client)
+    with {:ok, resp} <- request(:post, url, params, client) do
+      {:ok, to_struct(resp, Signature)}
+    end
   end
+end
+
+defmodule Upvest.Clientele.Wallet.Signature do
+  @moduledoc """
+  Signature represents the signed wallet signature
+  For more details, see https://doc.upvest.co/reference#kms_sign
+  """
+
+  defstruct [:big_number_format, :algorithm, :curve, :public_key, :r, :s, :recover]
 end

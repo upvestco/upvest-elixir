@@ -2,7 +2,9 @@ defmodule Upvest.API do
   defmacro __using__(opts) do
     quote do
       import Upvest, only: [request: 4]
+      import Upvest.Utils, only: [to_struct: 2]
       alias Upvest.Client
+
       @page_size 100
 
       if :create in unquote(opts) do
@@ -20,7 +22,10 @@ defmodule Upvest.API do
         """
         def retrieve(client, id) when is_bitstring(id) do
           resource_url = Path.join(endpoint(), id)
-          request(:get, resource_url, %{}, client)
+
+          with {:ok, resp} <- request(:get, resource_url, %{}, client) do
+            {:ok, to_struct(resp, __MODULE__)}
+          end
         end
       end
 
@@ -40,8 +45,7 @@ defmodule Upvest.API do
         #TODO: support configurable page size
         """
         def list_n(client, count) do
-          results = do_list_n(endpoint(), count, client, [])
-          {:ok, results}
+          do_list_n(endpoint(), count, client, [])
         end
 
         defp do_list_n(url, count, client, acc) do
@@ -51,7 +55,7 @@ defmodule Upvest.API do
 
           case is_nil(next) or length(acc) == count do
             true ->
-              acc
+              {:ok, to_struct(acc, __MODULE__)}
 
             _ ->
               uri = URI.parse(next)
@@ -63,26 +67,25 @@ defmodule Upvest.API do
         end
 
         def list(client) do
-          results = do_list(endpoint(), client, [])
-          # IO.puts inspect(results)
-          {:ok, results}
+          do_list(endpoint(), client, [])
         end
 
         defp do_list(url, client, acc) do
-          {:ok, resp} = request(:get, url, %{page_size: @page_size}, client)
-          next = Map.get(resp, "next")
-          acc = acc ++ resp["results"]
+          with {:ok, resp} <- request(:get, url, %{page_size: @page_size}, client) do
+            next = Map.get(resp, "next")
+            acc = acc ++ resp["results"]
 
-          case is_nil(next) do
-            true ->
-              acc
+            case is_nil(next) do
+              true ->
+                {:ok, to_struct(acc, __MODULE__)}
 
-            _ ->
-              uri = URI.parse(next)
-              params = Map.put(URI.decode_query(uri.query), :page_size, @page_size)
-              next_url = URI.parse(next).path |> String.slice(4..-1)
-              next_url = "#{next_url}?#{URI.encode_query(params)}"
-              do_list(next_url, client, acc)
+              _ ->
+                uri = URI.parse(next)
+                params = Map.put(URI.decode_query(uri.query), :page_size, @page_size)
+                next_url = URI.parse(next).path |> String.slice(4..-1)
+                next_url = "#{next_url}?#{URI.encode_query(params)}"
+                do_list(next_url, client, acc)
+            end
           end
         end
       end

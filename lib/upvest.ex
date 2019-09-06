@@ -29,11 +29,13 @@ defmodule Upvest do
           | PermissionError.t()
   # TODO (yao): define more specific response type
   @type response :: {:ok, any()} | {:error, error}
+  @type http_method :: :get | :post | :patch | :delete
 
   def version do
     @client_version
   end
 
+  @spec request(http_method(), binary(), map(), Client.t()) :: response()
   def request(action, endpoint, data, client) do
     headers = get_headers(client, action, endpoint, data)
     request_url = Client.build_url(client, endpoint)
@@ -53,31 +55,36 @@ defmodule Upvest do
   end
 
   defp handle_response({:ok, %{body: body, status_code: code}}) when code in [200, 201] do
-    {:ok, parse_response_body(body)}
+    parse_response_body(body)
   end
 
   defp handle_response({:ok, %{body: body, status_code: code}} = _req) do
-    # 404 respons ebody is {"detail": "Not Found"}
-    response = Map.get(parse_response_body(body), "error") || %{}
-    message = Map.get(response, "message")
-    details = Map.get(response, "details")
+    # some error such as 404 are plaintext
+    with {:ok, body} <- parse_response_body(body) do
+      response = Map.get(body, "error", %{})
+      message = Map.get(response, "message")
+      details = Map.get(response, "details")
 
-    error_struct =
-      case code do
-        code when code in [400, 422, 404] ->
-          %InvalidRequestError{}
+      error_struct =
+        case code do
+          code when code in [400, 422, 404] ->
+            %InvalidRequestError{}
 
-        401 ->
-          %AuthenticationError{}
+          401 ->
+            %AuthenticationError{}
 
-        403 ->
-          %PermissionError{}
+          403 ->
+            %PermissionError{}
 
-        _ ->
-          %APIError{}
-      end
+          _ ->
+            %APIError{}
+        end
 
-    {:error, %{error_struct | code: code, message: message, details: details}}
+      {:error, %{error_struct | code: code, message: message, details: details}}
+    else
+      {:error, _error} ->
+        {:error, %APIError{message: body}}
+    end
   end
 
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}) do
@@ -85,7 +92,7 @@ defmodule Upvest do
   end
 
   defp parse_response_body(body) do
-    Poison.decode!(body)
+    Poison.decode(body)
   end
 
   defp get_headers(client = %Client{auth: auth}, action, endpoint, data) do
