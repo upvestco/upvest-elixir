@@ -24,7 +24,7 @@ defmodule Upvest.AssetTest do
   end
 
   test "retrieve asset" do
-    {:ok, asset} = Asset.retrieve(@arweave_asset["id"], @client)
+    {:ok, asset} = Asset.retrieve(@client, @arweave_asset["id"])
 
     assert @arweave_asset == asset
   end

@@ -9,7 +9,7 @@ defmodule Upvest.API do
         @doc """
         Create a(n) #{__MODULE__ |> to_string |> String.split(".") |> List.last()}
         """
-        def create(data, client) do
+        def create(client, data) do
           request(:post, endpoint(), data, client)
         end
       end
@@ -18,7 +18,7 @@ defmodule Upvest.API do
         @doc """
         Retrive a(n) #{__MODULE__ |> to_string |> String.split(".") |> List.last()} by its ID
         """
-        def retrieve(id, client) when is_bitstring(id) do
+        def retrieve(client, id) when is_bitstring(id) do
           resource_url = Path.join(endpoint(), id)
           request(:get, resource_url, %{}, client)
         end
@@ -28,7 +28,7 @@ defmodule Upvest.API do
         @doc """
         Update a(n) #{__MODULE__ |> to_string |> String.split(".") |> List.last()}
         """
-        def update(id, data, client) when is_bitstring(id) do
+        def update(client, id, data) when is_bitstring(id) do
           resource_url = Path.join(endpoint(), id)
           request(:patch, resource_url, data, client)
         end
@@ -39,7 +39,7 @@ defmodule Upvest.API do
         List all #{__MODULE__ |> to_string |> String.split(".") |> List.last()}
         #TODO: support configurable page size
         """
-        def list_n(count, client) do
+        def list_n(client, count) do
           results = do_list_n(endpoint(), count, client, [])
           {:ok, results}
         end
@@ -64,7 +64,7 @@ defmodule Upvest.API do
 
         def list(client) do
           results = do_list(endpoint(), client, [])
-          #IO.puts inspect(results)
+          # IO.puts inspect(results)
           {:ok, results}
         end
 
@@ -72,7 +72,7 @@ defmodule Upvest.API do
           {:ok, resp} = request(:get, url, %{page_size: @page_size}, client)
           next = Map.get(resp, "next")
           acc = acc ++ resp["results"]
-          
+
           case is_nil(next) do
             true ->
               acc
@@ -91,7 +91,7 @@ defmodule Upvest.API do
         @doc """
         Delete a(n) #{__MODULE__ |> to_string |> String.split(".") |> List.last()}
         """
-        def delete(id, client) when is_bitstring(id) do
+        def delete(client, id) when is_bitstring(id) do
           resource_url = Path.join(endpoint(), id)
           request(:delete, resource_url, %{}, client)
         end

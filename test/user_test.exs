@@ -10,12 +10,9 @@ defmodule Upvest.UsersTest do
 
   setup_all do
     ts = timestamp()
-    {:ok, user} = User.create("upvest_user_#{ts}", "#{ts}", @client)
+    {:ok, user} = User.create(@client, "upvest_user_#{ts}", "#{ts}")
 
-    on_exit(fn ->
-      IO.puts("Cleaning up setup data for user test")
-      User.delete(user["username"], @client)
-    end)
+    on_exit(fn -> User.delete(@client, user["username"]) end)
 
     {:ok, [user: user, password: ts]}
   end
@@ -30,7 +27,7 @@ defmodule Upvest.UsersTest do
   end
 
   test "list subset of  users", _context do
-    {:ok, users} = User.list_n(210, @client)
+    {:ok, users} = User.list_n(@client, 210)
     assert is_list(users)
     assert length(users) == 210
     # test all objects have the same keys
@@ -40,7 +37,7 @@ defmodule Upvest.UsersTest do
 
   test "change password", context do
     {:ok, user} =
-      User.change_password(context.user["username"], context.password, timestamp(), @client)
+      User.change_password(@client, context.user["username"], context.password, timestamp())
 
     assert user["username"] == context.user["username"]
   end
