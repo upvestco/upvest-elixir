@@ -47,6 +47,7 @@ defmodule Upvest.API do
         defp do_list_n(url, count, client, acc) do
           {:ok, resp} = request(:get, url, %{}, client)
           next = Map.get(resp, "next")
+          acc = acc ++ resp["results"]
 
           case is_nil(next) or length(acc) == count do
             true ->
@@ -57,19 +58,21 @@ defmodule Upvest.API do
               params = Map.put(URI.decode_query(uri.query), :page_size, @page_size)
               next_url = URI.parse(next).path |> String.slice(4..-1)
               next_url = "#{next_url}?#{URI.encode_query(params)}"
-              do_list_n(next_url, count, client, acc ++ resp["results"])
+              do_list_n(next_url, count, client, acc)
           end
         end
 
         def list(client) do
           results = do_list(endpoint(), client, [])
+          #IO.puts inspect(results)
           {:ok, results}
         end
 
         defp do_list(url, client, acc) do
           {:ok, resp} = request(:get, url, %{page_size: @page_size}, client)
           next = Map.get(resp, "next")
-
+          acc = acc ++ resp["results"]
+          
           case is_nil(next) do
             true ->
               acc
@@ -79,7 +82,7 @@ defmodule Upvest.API do
               params = Map.put(URI.decode_query(uri.query), :page_size, @page_size)
               next_url = URI.parse(next).path |> String.slice(4..-1)
               next_url = "#{next_url}?#{URI.encode_query(params)}"
-              do_list(next_url, client, acc ++ resp["results"])
+              do_list(next_url, client, acc)
           end
         end
       end
