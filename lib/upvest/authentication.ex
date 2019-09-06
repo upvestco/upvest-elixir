@@ -68,7 +68,7 @@ defimpl Upvest.AuthProvider, for: Upvest.Authentication.OAuth do
 
     # Retrieve and return OAuth token
     %{
-      "Authorization": "Bearer #{access_token}",
+      Authorization: "Bearer #{access_token}",
       "Content-Type": "application/json"
     }
   end
