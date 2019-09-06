@@ -3,7 +3,15 @@ ExUnit.start()
 Envy.auto_load()
 
 defmodule Upvest.TestHelper do
+  alias Upvest.Client
   alias Upvest.Authentication.{KeyAuth, OAuth}
+  
+  def random_string(length \\ 32) do
+    characters = Enum.to_list(?a..?z) ++ Enum.to_list(?0..?9)
+    
+    Enum.map(1..length, fn _ -> Enum.random(characters) end)
+    |> to_string
+  end
 
   def new_test_client(:key) do
     api_key = System.get_env("API_KEY")
@@ -11,7 +19,7 @@ defmodule Upvest.TestHelper do
     api_passphrase = System.get_env("API_PASSPHRASE")
 
     keyauth = %KeyAuth{api_key: api_key, api_secret: api_secret, api_passphrase: api_passphrase}
-    Upvest.Client.new(keyauth)
+    Client.new(keyauth)
   end
 
   def new_test_client(:oauth) do
@@ -27,6 +35,6 @@ defmodule Upvest.TestHelper do
       password: password
     }
 
-    Upvest.Client.new(oauth)
+    Client.new(oauth)
   end
 end

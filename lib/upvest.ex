@@ -57,7 +57,8 @@ defmodule Upvest do
   end
 
   defp handle_response({:ok, %{body: body, status_code: code}} = _req) do
-    response = Map.get(parse_response_body(body), "error")
+    # 404 respons ebody is {"detail": "Not Found"}
+    response = Map.get(parse_response_body(body), "error") || %{}
     message = Map.get(response, "message")
     details = Map.get(response, "details")
 
