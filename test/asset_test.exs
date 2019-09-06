@@ -18,14 +18,14 @@ defmodule Upvest.AssetTest do
     "symbol" => "AR"
   }
 
-  test "test list assets" do
+  test "list assets" do
     {:ok, assets} = Asset.list(@client)
-    assert @arweave_asset == Enum.at(context.assets, 0)
+    assert @arweave_asset == Enum.at(assets, 0)
   end
 
-  test "test retrieve asset" do
+  test "retrieve asset" do
     {:ok, asset} = Asset.retrieve(@arweave_asset["id"], @client)
 
-    assert @arweave_asset == Enum.at(asset, 0)
+    assert @arweave_asset == asset
   end
 end
