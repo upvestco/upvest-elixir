@@ -15,11 +15,11 @@ defmodule Upvest.Clientele.Wallet do
   and then to encrypt the new private key.
   """
   @spec create(Client.t(), binary, binary, non_neg_integer(), atom()) :: Upvest.response()
-  def create(client, asset_id, password, index \\ 0, type \\ :encrypted) do
+  def create(client, password, asset_id, index \\ 0, type \\ :encrypted) do
     params = %{asset_id: asset_id, password: password, index: index, type: type}
 
     with {:ok, resp} <- request(:post, endpoint(), params, client) do
-      {:ok, to_struct(resp, __MODULE__)}
+      {:ok, to_struct(resp, Wallet)}
     end
   end
 
@@ -27,7 +27,7 @@ defmodule Upvest.Clientele.Wallet do
   Sign (the hash of) data with the private key corresponding to this wallet.
   """
   @spec sign(Client.t(), binary, binary, binary(), binary(), binary()) :: Upvest.response()
-  def sign(client, wallet_id, to_sign, password, input_format, output_format) do
+  def sign(client, password, wallet_id, to_sign, input_format, output_format) do
     url = "#{endpoint()}#{wallet_id}/sign"
 
     params = %{

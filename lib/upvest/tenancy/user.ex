@@ -12,7 +12,7 @@ defmodule Upvest.Tenancy.User do
     params = %{username: username, password: password}
 
     with {:ok, user} <- request(:post, endpoint(), params, client) do
-      {:ok, to_struct(user, __MODULE__)}
+      {:ok, to_struct(user, User)}
     end
   end
 
@@ -22,7 +22,7 @@ defmodule Upvest.Tenancy.User do
     url = Path.join(endpoint(), username)
 
     with {:ok, user} <- request(:patch, url, params, client) do
-      {:ok, to_struct(user, __MODULE__)}
+      {:ok, to_struct(user, User)}
     end
   end
 end

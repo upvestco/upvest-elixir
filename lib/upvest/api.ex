@@ -2,8 +2,11 @@ defmodule Upvest.API do
   defmacro __using__(opts) do
     quote do
       import Upvest, only: [request: 4]
-      import Upvest.Utils, only: [to_struct: 2]
+      import Upvest.Utils, only: [to_struct: 2, sprintf: 2]
       alias Upvest.Client
+      alias __MODULE__
+
+      @type t :: %__MODULE__{}
 
       @page_size 100
 

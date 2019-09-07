@@ -2,7 +2,6 @@ defmodule Upvest.WalletTest do
   use ExUnit.Case, async: false
   alias Upvest.Clientele.Wallet
   alias Upvest.Clientele.Wallet.Signature
-  alias Upvest.Tenancy.Asset
   import Upvest.TestHelper
 
   doctest Upvest.Clientele.Wallet
@@ -30,7 +29,7 @@ defmodule Upvest.WalletTest do
 
   setup_all do
     asset_id = Enum.at(@eth_wallet.balances, 0).asset_id
-    {:ok, wallet} = Wallet.create(@client, asset_id, @user_password)
+    {:ok, wallet} = Wallet.create(@client, @user_password, asset_id)
 
     {:ok, [wallet: wallet]}
   end
@@ -49,7 +48,7 @@ defmodule Upvest.WalletTest do
 
   test "sign wallet", context do
     to_sign = random_string() |> Base.encode16(case: :lower)
-    {:ok, resp} = Wallet.sign(@client, context.wallet.id, to_sign, @user_password, "hex", "hex")
+    {:ok, resp} = Wallet.sign(@client, @user_password, context.wallet.id, to_sign, "hex", "hex")
     assert resp.__struct__ == Signature
   end
 
