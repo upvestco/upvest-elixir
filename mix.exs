@@ -33,11 +33,10 @@ defmodule Upvest.MixProject do
       {:poison, "~> 4.0"},
       {:dialyxir, "~> 0.5", only: :dev, runtime: false},
       # Test
-      {:envy, "~> 1.1.1", only: [:dev, :test], runtime: false},
       # Docs      
-      {:ex_doc, "~> 0.21.1", only: :dev, runtime: false},
-      {:earmark, "~> 1.3.5", only: :dev, runtime: false},
-      {:inch_ex, ">= 2.0.0", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.21.1", only: :docs, runtime: false},
+      {:earmark, "~> 1.3.5", only: :docs, runtime: false},
+      {:inch_ex, ">= 2.0.0", only: :docs, runtime: false}
     ]
   end
 
