@@ -6,7 +6,7 @@ defmodule Upvest.MixProject do
     [
       app: :upvest,
       version: @version,
-      elixir: "~> 1.9",
+      elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
       consolidate_protocols: not (Mix.env() in [:dev, :test]),
