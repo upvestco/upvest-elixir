@@ -1,8 +1,6 @@
 defprotocol Upvest.AuthProvider do
   @moduledoc """
-  AuthProvider desfines a behaviour for authentication mechanisms supported by Upvest API
-
-  # TODO: define custom type for headers and possible erorr types
+  AuthProvider defines a protocol for API keys and OAuth authentication mechanisms supported by Upvest API.
   """
 
   @doc """
@@ -11,10 +9,10 @@ defprotocol Upvest.AuthProvider do
   """
   @spec get_headers(
           auth :: Upvest.Client.auth(),
-          method :: String.t(),
+          method :: Upvest.http_method(),
           path :: String.t(),
           body :: map()
-        ) :: {:ok, map()} | {:error, String.t()}
+        ) :: {:ok, Upvest.headers()} | {:error, Upvest.error()}
   def get_headers(auth, method, path, body)
 end
 
@@ -25,6 +23,8 @@ end
 defimpl Upvest.AuthProvider, for: Upvest.Authentication.KeyAuth do
   @moduledoc """
   Authenticates requests on tenant endpoints using API keys.
+
+  Intended for use in Upvest.Client as param to Upvest.request/4
   """
   alias Upvest.Client
   import Upvest.Utils, only: [timestamp: 0]

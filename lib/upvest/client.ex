@@ -1,4 +1,17 @@
 defmodule Upvest.Client do
+  @moduledoc """
+  A module for composing authentication and request parameters to the Upvest API.
+
+  Currently encompasses key authentication and OAuth authenticationrequired for Tenancy and CLientele 
+  APIs respetively. Generally intended to passed in as parameter to Upvest.request/4.
+
+  It's implemented such that you can change the authentication parameter and retain the 
+  other configs for requests to other APIs. At a minimum, the authentication config must be present
+
+  The default `BASE_URL` for both authentication objects is `https://api.playground.upvest.co`, 
+  but feel free to adjust it, in addition to additional parameters such as extra HTTP headers 
+  and http timeout on the client struct.
+  """
   # TODO: support user config of the timeout and underlying http client
   alias Upvest.Authentication.{KeyAuth, OAuth}
   alias __MODULE__
@@ -60,7 +73,6 @@ defmodule Upvest.Client do
 
   @spec versioned_url(path :: binary) :: binary
   def versioned_url(path) do
-    # missing trailing slash results in 404 on some urls, /tenancy/users
     path1 = Path.join(@api_version, path)
     if String.ends_with?(path, "/"), do: path1 <> "/", else: path1
   end

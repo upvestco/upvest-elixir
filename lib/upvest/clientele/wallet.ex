@@ -47,7 +47,7 @@ end
 defmodule Upvest.Clientele.Wallet.Signature do
   @moduledoc """
   Signature represents the signed wallet signature
-  For more details, see https://doc.upvest.co/reference#kms_sign
+  For more details, see `https://doc.upvest.co/reference#kms_sign`
   """
 
   defstruct [:big_number_format, :algorithm, :curve, :public_key, :r, :s, :recover]

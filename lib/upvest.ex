@@ -1,6 +1,12 @@
 defmodule Upvest do
   @moduledoc """
-  Documentation for Upvest.
+  An HTTP client for Upvest.
+
+  All tenancy related operations must be authenticated using the API Keys Authentication, whereas all actions on a 
+  user's behalf need to be authenticated via OAuth. The API calls are built along with those two authentication objects.
+
+  All API calls return either `{:ok, response}` or `{:error, error}`, and where possible succesful 
+  response are transformed into Elixir structs mapped to the corresponding Upvest API resource.
   """
   alias Upvest.{
     APIConnectionError,
@@ -17,7 +23,7 @@ defmodule Upvest do
 
   @base_headers [
     {"User-Agent", @useragent},
-    # {"Content-Type", "application/json"},
+    {"Content-Type", "application/json; charset=utf8"},
     {"Accept", "application/json"}
   ]
 
@@ -27,14 +33,21 @@ defmodule Upvest do
           | AuthenticationError.t()
           | InvalidRequestError.t()
           | PermissionError.t()
-  # TODO (yao): define more specific response type
-  @type response :: {:ok, any()} | {:error, error}
-  @type http_method :: :get | :post | :patch | :delete
 
+  @type response :: {:ok, any()} | {:ok, binary()} | {:error, error}
+  @type http_method :: :get | :post | :patch | :delete
+  @type headers :: map()
+
+  @doc """
+  Returns the current version of the library
+  """
   def version do
     @client_version
   end
 
+  @doc """
+  Executes the request and returns the response.
+  """
   @spec request(http_method(), binary(), map(), Client.t()) :: response()
   def request(action, endpoint, data, client) do
     headers = get_headers(client, action, endpoint, data)
@@ -48,6 +61,8 @@ defmodule Upvest do
     HTTPoison.request(action, request_url, body, headers, options)
     |> handle_response
   end
+
+  ## PRIVATE
 
   # delete endpoint returns 204 No Content 
   defp handle_response({:ok, %{status_code: 204}}) do
