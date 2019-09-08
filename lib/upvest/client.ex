@@ -15,7 +15,6 @@ defmodule Upvest.Client do
   # TODO: support user config of the timeout and underlying http client
   alias Upvest.Authentication.{KeyAuth, OAuth}
   alias __MODULE__
-  alias Upvest.Utils
 
   # API version is the currently supported API version
   @api_version "1.0"
