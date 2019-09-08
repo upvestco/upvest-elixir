@@ -15,7 +15,13 @@ defmodule Upvest.MixProject do
       source_url: "https://gitlab.com/rpip/upvest-elixir",
       homepage_url: "https://gitlab.com/rpip/upvest-elixir",
       description: "Elixir library for the Upvest API",
-      dialyzer: [ignore_warnings: "dialyzer.ignore-warnings"]
+      dialyzer: [ignore_warnings: "dialyzer.ignore-warnings"],
+      docs: [
+        main: "readme",
+        extras: ["README.md"],
+        groups_for_modules: groups_for_modules(),
+        nest_modules_by_prefix: nest_modules_by_prefix()
+      ]
     ]
   end
 
@@ -49,6 +55,45 @@ defmodule Upvest.MixProject do
       maintainers: ["Yao Adzaku"],
       licenses: ["MIT"],
       links: %{github: "https://github.com/rpip/upvest-elixir"}
+    ]
+  end
+
+  defp groups_for_modules do
+    [
+      "Core Resources": [
+        Upvest.API,
+        Upvest.Client,
+        Upvest.Utils,
+        Upvest.AuthProvider
+      ],
+      "Tenancy API": [
+        Upvest.Tenancy.User,
+        Upvest.Tenancy.Asset
+      ],
+      "Clientele API": [
+        Upvest.Clientele.Wallet,
+        Upvest.Clientele.Transaction
+      ],
+      Authentication: [
+        Upvest.AuthProvider,
+        Upvest.Authentication.KeyAuth,
+        Upvest.Authentication.OAuth
+      ],
+      Errors: [
+        Upvest.APIConnectionError,
+        Upvest.AuthenticationError,
+        Upvest.InvalidRequestError,
+        Upvest.PermissionError,
+        Upvest.APIError
+      ]
+    ]
+  end
+
+  def nest_modules_by_prefix() do
+    [
+      Upvest.Authentication,
+      Upvest.Authentication.KeyAuth,
+      Upvest.Authentication.OAuth
     ]
   end
 end
