@@ -1,6 +1,5 @@
 HTTPoison.start()
 ExUnit.start()
-Envy.auto_load()
 
 defmodule Upvest.TestHelper do
   alias Upvest.Client
