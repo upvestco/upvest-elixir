@@ -51,7 +51,7 @@ defmodule Upvest.MixProject do
 
   defp package do
     [
-      files: ~w(lib mix.exs README.md LICENSE CHANGELOG),
+      files: ~w(lib mix.exs README.md LICENSE),
       maintainers: ["Yao Adzaku"],
       licenses: ["MIT"],
       links: %{github: "https://github.com/rpip/upvest-elixir"}
