@@ -1,7 +1,11 @@
 # Upvest Elixir
 
 [![Build Status](https://travis-ci.org/rpip/upvest-elixir.svg?branch=master)](https://travis-ci.org/rpip/upvest-elixir)
-[![Inline docs](http://inch-ci.org/github/rpip/upvest.svg)](http://inch-ci.org/github/rpip/upvest-elixir)
+[![Hex.pm](https://img.shields.io/hexpm/v/upvest.svg?maxAge=2592000)](https://hex.pm/packages/upvest)
+
+[![Hex Docs](https://img.shields.io/badge/hex-docs-9768d1.svg)](https://hexdocs.pm/upvest)
+[![Inline docs](http://inch-ci.org/github/rpip/upvest-elixir.svg)](http://inch-ci.org/github/rpip/upvest-elixir)
+
 
 Elixir library for the Upvest API.
 
@@ -93,6 +97,36 @@ with {:ok, wallet} <- Wallet.create(client, user_password, asset_id) do
   {:error, error} ->
     # handle error
 end
+```
+
+## Error handling
+
+In case there is an error, the response is {:ok, error}  where error is one of:
+
+* Upvest.APIConnectionError
+* Upvest.AuthenticationError
+* Upvest.InvalidRequestError
+* Upvest.PermissionError
+* Upvest.APIError
+
+For example, using already taken username will return the error:
+
+``` elixir
+{:error,
+ %Upvest.APIError{
+   code: 409,
+   details: [
+     %{
+       "domain" => "clientele",
+       "location" => "username",
+       "locationType" => "parameter",
+       "message" => "Duplicate Value",
+       "reason" => "duplicateValue"
+     }
+   ],
+   message: "User with given username exists already",
+   type: "api_error"
+ }}
 ```
 
 ## Building docs
