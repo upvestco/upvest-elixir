@@ -51,7 +51,13 @@ alias Upvest.Client
 alias Upvest.Authentication.KeyAuth
 alias Upvest.Tenancy.User
 
-keyauth = %KeyAuth{api_key: your_api_key, api_secret: your_api_secret, api_passphrase: your_api_passphrase}
+keyauth = %KeyAuth{
+    api_key: your_api_key,
+    api_secret: your_api_secret,
+    api_passphrase:
+    your_api_passphrase
+}
+
 client = Client.new(keyauth)
 
 # create a user
@@ -60,7 +66,6 @@ with {:ok, user} <- User.create(client, username, password) do
   else
     {:error, error} ->
     # handle the error
-  end
 end
 
 # list users
@@ -78,22 +83,29 @@ The authentication via OAuth allows you to perform operations on behalf of your 
 For more information on the OAuth concept, please refer to our [documentation](https://doc.upvest.co/docs/oauth2-authentication).
 Again, please retrieve your client credentials from the [Upvest account management](https://login.upvest.co/).
 
-Next, create a `Client` with your Upvest OAuth authentication data in order to authenticate your API calls on behalf of a user:
+Next, create a `Client` with your Upvest OAuth  in order to authenticate your API calls on behalf of a user:
 
 ```elixir
 alias Upvest.Client
 alias Upvest.Authentication.OAuth
 alias Upvest.Clientele.Wallet
 
-oauth = %OAuth{client_id: your_client_id, client_secret: your_client_secret, username: your_users_username, password: your_users_password}
-# If you already have a client created with a key auth, you can create a new oauth client from that by changing the auth param
+oauth = %OAuth{
+  client_id: client_id,
+  client_secret: client_secret,
+  username: your_users_username,
+  password: your_users_password
+}
+
+# If you already have a client created with a key auth
+# you can create a new oauth client from that by changing the auth param
 client = %{client | auth: oauth}
 
 # alternatively, client = Client.new(oauth)
 
 with {:ok, wallet} <- Wallet.create(client, user_password, asset_id) do
-  {:ok, wallet} ->
-    # handle new wallet created
+  # handle new wallet created
+  else
   {:error, error} ->
     # handle error
 end
@@ -101,7 +113,7 @@ end
 
 ## Error handling
 
-In case there is an error, the response is {:ok, error}  where error is one of:
+In case there is an error, the response is {:error, error} where error is one of:
 
 * Upvest.APIConnectionError
 * Upvest.AuthenticationError
