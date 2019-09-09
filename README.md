@@ -54,8 +54,7 @@ alias Upvest.Tenancy.User
 keyauth = %KeyAuth{
     api_key: your_api_key,
     api_secret: your_api_secret,
-    api_passphrase:
-    your_api_passphrase
+    api_passphrase: your_api_passphrase
 }
 
 client = Client.new(keyauth)
