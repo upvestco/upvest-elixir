@@ -140,7 +140,7 @@ $ MIX_ENV=docs mix docs
 Clone the repo and fetch its dependencies:
 
 ```
-$ git clone https://gitlab.com/rpip/upvest-elixir
+$ git clone https://github.com/rpip/upvest-elixir
 $ cd upvest-elixir
 $ mix do deps.get, compile
 $ mix test

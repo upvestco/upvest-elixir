@@ -12,8 +12,8 @@ defmodule Upvest.MixProject do
       consolidate_protocols: not (Mix.env() in [:dev, :test]),
       deps: deps(),
       package: package(),
-      source_url: "https://gitlab.com/rpip/upvest-elixir",
-      homepage_url: "https://gitlab.com/rpip/upvest-elixir",
+      source_url: "https://github.com/rpip/upvest-elixir",
+      homepage_url: "https://github.com/rpip/upvest-elixir",
       description: "Elixir library for the Upvest API",
       dialyzer: [ignore_warnings: "dialyzer.ignore-warnings"],
       docs: [

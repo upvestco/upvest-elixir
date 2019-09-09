@@ -3,6 +3,7 @@ defmodule Upvest.Tenancy.Asset do
   Handles operations related to Assets.
 
   You can:
+  - Retrieve an asset
   - List all assets
   - List specific number of assets
 
