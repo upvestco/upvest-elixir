@@ -1,4 +1,11 @@
 defmodule Upvest.Utils do
+  @moduledoc """
+  Utility functions for Upvest
+  """
+
+  @doc """
+  Returns current timestamp in seconds
+  """
   def timestamp do
     :os.system_time(:seconds)
   end

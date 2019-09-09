@@ -143,4 +143,4 @@ Run a single test:
 
 For a comprehensive reference, check out the [Upvest documentation](https://doc.upvest.co).
 
-For details on all the functionality in this library, see the [HexDocs documentation](https://hexdocs.pm/upvest-elixir/).
+For details on all the functionality in this library, see the [HexDocs documentation](https://hexdocs.pm/upvest).

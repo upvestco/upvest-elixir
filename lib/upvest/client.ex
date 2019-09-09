@@ -12,7 +12,6 @@ defmodule Upvest.Client do
   but feel free to adjust it, in addition to additional parameters such as extra HTTP headers 
   and http timeout on the client struct.
   """
-  # TODO: support user config of the timeout and underlying http client
   alias Upvest.Authentication.{KeyAuth, OAuth}
   alias __MODULE__
 
@@ -35,14 +34,23 @@ defmodule Upvest.Client do
           timeout: non_neg_integer()
         }
 
+  @doc """
+  Returns a new client
+  """
   @spec new() :: t
   def new(), do: %__MODULE__{}
 
+  @doc """
+  Returns a new client with the given authentication
+  """
   @spec new(auth) :: t
   def new(auth) do
     pnew(auth, @base_url)
   end
 
+  @doc """
+  Returns a new client with the given authentication and base url
+  """
   @spec new(map(), binary) :: t
   def new(auth = %KeyAuth{}, base_url) do
     pnew(auth, base_url)

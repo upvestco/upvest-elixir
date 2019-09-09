@@ -1,4 +1,14 @@
 defmodule Upvest.Clientele.Wallet do
+  @moduledoc """
+  Handles operations related to Wallet
+
+  You can:
+  - Retrieve wallet
+  - List all wallets
+  - List specific number of wallets
+
+  For more details see `https://doc.upvest.co/reference#kms_wallet_list`
+  """
   use Upvest.API, [:list, :retrieve]
   alias Upvest.Clientele.Wallet.Signature
 

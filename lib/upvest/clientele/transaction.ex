@@ -1,4 +1,14 @@
 defmodule Upvest.Clientele.Transaction do
+  @moduledoc """
+  Handles operations related to user transactions
+
+  You can:
+  - Create new transaction
+  - List all transactions
+  - List specific number of transactions
+
+  For more details see `https://doc.upvest.co/reference#kms_transaction_list`
+  """
   use Upvest.API, [:list, :retrieve]
 
   defstruct [:address, :balances, :id, :index, :protocol, :status]

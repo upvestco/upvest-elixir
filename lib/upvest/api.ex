@@ -72,8 +72,6 @@ defmodule Upvest.API do
       if :list in unquote(opts) do
         @doc """
         List specific number of #{__MODULE__ |> Module.split() |> List.last()}
-
-        # TODO: support configurable page size
         """
         @spec list_n(Client.t(), non_neg_integer()) ::
                 {:ok, [__MODULE__.t()]} | {:error, Upvest.error()}

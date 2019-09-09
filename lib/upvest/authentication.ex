@@ -1,6 +1,9 @@
 defprotocol Upvest.AuthProvider do
   @moduledoc """
-  AuthProvider defines a protocol for API keys and OAuth authentication mechanisms supported by Upvest API.
+  Protocol for API keys and OAuth authentication mechanisms supported by Upvest API.
+
+  This protocol requires one functions to be implemented: get_headers/4, which returns the 
+  HTTP authentation headers required by the associated endpoint.
   """
 
   @doc """
