@@ -160,7 +160,7 @@ $ mix test
 ## Development
 
 1. Code must be nicely formatted: `mix format`
-2. All types, structs and funcs should be documented.
+2. All types, structs and functions should be documented.
 3. Ensure that `mix test` succeeds.
 4. Set up config settings via environment variables, ideally in a .env file you can source:
 

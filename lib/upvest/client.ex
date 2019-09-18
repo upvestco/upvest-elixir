@@ -51,12 +51,12 @@ defmodule Upvest.Client do
   @doc """
   Returns a new client with the given authentication and base url
   """
-  @spec new(map(), binary) :: t
+  @spec new(auth(), binary) :: t
   def new(auth = %KeyAuth{}, base_url) do
     pnew(auth, base_url)
   end
 
-  @spec new(map(), binary) :: t
+  @spec new(auth(), binary) :: t
   def new(auth = %OAuth{}, base_url) do
     pnew(auth, base_url)
   end
