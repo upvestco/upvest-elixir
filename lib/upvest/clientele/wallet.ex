@@ -9,7 +9,7 @@ defmodule Upvest.Clientele.Wallet do
 
   For more details see `https://doc.upvest.co/reference#kms_wallet_list`
   """
-  use Upvest.API, [:list, :retrieve]
+  use Upvest.API, [:all, :retrieve, :list]
   alias Upvest.Clientele.Wallet.Signature
 
   defstruct [:address, :balances, :id, :index, :protocol, :status]

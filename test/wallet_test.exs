@@ -35,13 +35,13 @@ defmodule Upvest.WalletTest do
   end
 
   test "list all wallets" do
-    {:ok, wallets} = Wallet.list(@client)
+    {:ok, wallets} = Wallet.all(@client)
     assert is_list(wallets)
     assert Enum.random(wallets).__struct__ == Wallet
   end
 
-  test "list specific number of wallets" do
-    {:ok, wallets} = Wallet.list_n(@client, 210)
+  test "list subset of wallets" do
+    {:ok, wallets} = Wallet.list(@client, 210)
     assert is_list(wallets)
     assert Enum.random(wallets).__struct__ == Wallet
   end

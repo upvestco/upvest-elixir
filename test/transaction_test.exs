@@ -40,13 +40,13 @@ defmodule Upvest.TransactionTest do
   end
 
   test "list all transactions" do
-    {:ok, transactions} = Transaction.list(@client)
+    {:ok, transactions} = Transaction.all(@client)
     assert is_list(transactions)
     assert Enum.random(transactions).__struct__ == Transaction
   end
 
-  test "list specific number of transactions" do
-    {:ok, transactions} = Transaction.list_n(@client, 210)
+  test "list subset of transactions" do
+    {:ok, transactions} = Transaction.list(@client, 210)
     assert is_list(transactions)
     assert Enum.random(transactions).__struct__ == Transaction
   end

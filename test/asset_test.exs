@@ -18,8 +18,8 @@ defmodule Upvest.AssetTest do
     symbol: "AR"
   }
 
-  test "list assets" do
-    {:ok, assets} = Asset.list(@client)
+  test "get all assets" do
+    {:ok, assets} = Asset.all(@client)
     assert Enum.random(assets).__struct__ == Asset
   end
 

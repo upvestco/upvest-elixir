@@ -21,8 +21,8 @@ defmodule Upvest.API do
   * retrive/2 - retrieve a resource
   * update/3 - update a resource
   * delete/2 - delete a resource
-  * list/1 - list all resources
-  * list_n/2 - list all resources, capped to specified limit
+  * all/1 - list all resources
+  * list/2 - list all resources, capped to specified limit
   """
   defmacro __using__(opts) do
     quote do
@@ -73,13 +73,13 @@ defmodule Upvest.API do
         @doc """
         List specific number of #{__MODULE__ |> Module.split() |> List.last()}
         """
-        @spec list_n(Client.t(), non_neg_integer()) ::
-                {:ok, [__MODULE__.t()]} | {:error, Upvest.error()}
-        def list_n(client, count) do
-          do_list_n(endpoint(), count, client, [])
+        @spec list(Client.t(), non_neg_integer()) ::
+        {:ok, [__MODULE__.t()]} | {:error, Upvest.error()}
+        def list(client, count) do
+          do_list(endpoint(), count, client, [])
         end
 
-        defp do_list_n(url, count, client, acc) do
+        defp do_list(url, count, client, acc) do
           {:ok, resp} = request(:get, url, %{}, client)
           next = Map.get(resp, "next")
           acc = acc ++ resp["results"]
@@ -93,19 +93,21 @@ defmodule Upvest.API do
               params = Map.put(URI.decode_query(uri.query), :page_size, @page_size)
               next_url = URI.parse(next).path |> String.slice(4..-1)
               next_url = "#{next_url}?#{URI.encode_query(params)}"
-              do_list_n(next_url, count, client, acc)
+              do_list(next_url, count, client, acc)
           end
         end
+      end
 
+      if :all in unquote(opts) do
         @doc """
         List all #{__MODULE__ |> Module.split() |> List.last()}
         """
-        @spec list(Client.t()) :: {:ok, [__MODULE__.t()]} | {:error, Upvest.error()}
-        def list(client) do
-          do_list(endpoint(), client, [])
+        @spec all(Client.t()) :: {:ok, [__MODULE__.t()]} | {:error, Upvest.error()}
+        def all(client) do
+          do_all(endpoint(), client, [])
         end
 
-        defp do_list(url, client, acc) do
+        defp do_all(url, client, acc) do
           with {:ok, resp} <- request(:get, url, %{page_size: @page_size}, client) do
             next = Map.get(resp, "next")
             acc = acc ++ resp["results"]
@@ -119,7 +121,7 @@ defmodule Upvest.API do
                 params = Map.put(URI.decode_query(uri.query), :page_size, @page_size)
                 next_url = URI.parse(next).path |> String.slice(4..-1)
                 next_url = "#{next_url}?#{URI.encode_query(params)}"
-                do_list(next_url, client, acc)
+                do_all(next_url, client, acc)
             end
           end
         end

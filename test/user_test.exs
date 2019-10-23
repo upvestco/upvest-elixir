@@ -18,13 +18,13 @@ defmodule Upvest.UsersTest do
   end
 
   test "list all users", _context do
-    {:ok, users} = User.list(@client)
+    {:ok, users} = User.all(@client)
     assert is_list(users)
     assert Enum.random(users).__struct__ == User
   end
 
   test "list subset of  users", _context do
-    {:ok, users} = User.list_n(@client, 210)
+    {:ok, users} = User.list(@client, 210)
     assert is_list(users)
     assert Enum.random(users).__struct__ == User
   end

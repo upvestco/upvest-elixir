@@ -9,7 +9,7 @@ defmodule Upvest.Tenancy.Asset do
 
   For more details see `https://doc.upvest.co/reference#assets`
   """
-  use Upvest.API, [:list, :retrieve]
+  use Upvest.API, [:all, :retrieve] 
 
   defstruct [:id, :name, :symbol, :exponent, :protocol, :metadata]
 

@@ -12,7 +12,7 @@ defmodule Upvest.Tenancy.User do
 
   For more details see `https://doc.upvest.co/reference#tenancy_user_list`
   """
-  use Upvest.API, [:retrieve, :delete, :list]
+  use Upvest.API, [:retrieve, :delete, :all, :list]
 
   defstruct [:username, :recoverykit, :wallets]
 
