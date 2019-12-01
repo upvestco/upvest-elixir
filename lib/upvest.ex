@@ -122,10 +122,17 @@ defmodule Upvest do
     end
   end
 
+  defp encode_body(%{:__struct__ => _} = data, content_type) do
+    Map.from_struct(data)
+    |> Enum.reject(fn({_, v}) -> v == nil end)
+    |> Enum.into(%{})
+    |> encode_body(content_type)
+  end
+  
   defp encode_body(data, %{"Content-Type": "application/x-www-form-urlencoded"}) do
     URI.encode_query(data)
   end
-
+  
   defp encode_body(data, _) do
     Poison.encode!(data)
   end
