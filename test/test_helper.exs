@@ -4,6 +4,8 @@ ExUnit.start()
 defmodule Upvest.TestHelper do
   alias Upvest.Client
   alias Upvest.Authentication.{KeyAuth, OAuth}
+  
+  @base_url System.get_env("UPVEST_API_TARGET")
 
   def random_string(length \\ 32) do
     characters = Enum.to_list(?a..?z) ++ Enum.to_list(?0..?9)
@@ -18,7 +20,7 @@ defmodule Upvest.TestHelper do
     api_passphrase = System.get_env("API_PASSPHRASE")
 
     keyauth = %KeyAuth{api_key: api_key, api_secret: api_secret, api_passphrase: api_passphrase}
-    Client.new(keyauth)
+    Client.new(keyauth, @base_url)
   end
 
   def new_test_client(:oauth) do
@@ -34,6 +36,6 @@ defmodule Upvest.TestHelper do
       password: password
     }
 
-    Client.new(oauth)
+    Client.new(oauth, @base_url)
   end
 end
