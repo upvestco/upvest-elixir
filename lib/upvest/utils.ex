@@ -52,7 +52,9 @@ defmodule Upvest.Utils do
     struct = struct(module)
 
     Enum.reduce(Map.to_list(struct), struct, fn {k, _}, acc ->
-      case Map.fetch(data, camelize(k, camel)) do
+      camelKey = camelize(k, camel)
+      
+      case Map.fetch(data, camelKey) do
         {:ok, v} -> %{acc | k => v}
         :error -> acc
       end
@@ -60,7 +62,11 @@ defmodule Upvest.Utils do
   end
 
   defp camelize(key, false), do: "#{key}"
-  defp camelize(key, _), do: Macro.camelize("#{key}")
+  defp camelize(key, _) do
+    with <<first::utf8, rest::binary>> <- Macro.camelize("#{key}") do
+      String.downcase(<<first::utf8>>) <> rest
+    end
+  end
   
   @doc """
   Formats according the given string format specifier and returns the resulting string.

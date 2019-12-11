@@ -121,10 +121,10 @@ defmodule Upvest.Tenancy.Historical do
   List transactions that have been sent to and received by an address.
   Takes an optional parameter of transaction filters
   """
-  def list_transactions(client, protocol, network, address, opts \\ %TxFilters{}) do
+  def all_transactions(client, protocol, network, address, opts \\ %TxFilters{}) do
     url = "#{endpoint()}/#{protocol}/#{network}/transactions/#{address}"
-    opts = Enum.reject(opts, &is_nil/1) |> Enum.into(%{})
-    with {:ok, resp} <- request(:get, url, opts, client) do
+    opts = Enum.reject(Map.from_struct(opts), fn {k, v} -> is_nil(v) end) |> Enum.into(%{})
+    with {:ok, resp} <- request(:get, url, opts, client) do      
       {:ok, to_struct(resp["result"], HDTransaction, true)}
     end 
   end
@@ -133,7 +133,7 @@ defmodule Upvest.Tenancy.Historical do
   def get_transaction(client, protocol, network, txhash) do
     url = "#{endpoint()}/#{protocol}/#{network}/transaction/#{txhash}"
     with {:ok, resp} <- request(:get, url, %{}, client) do
-      {:ok, to_struct(resp["result"], HDBalance, true)}
+      {:ok, to_struct(resp["result"], HDTransaction, true)}
     end
   end
 
@@ -154,7 +154,7 @@ defmodule Upvest.Tenancy.Historical do
   end
   
   def api_status(client, protocol, network) do
-    url = "#{endpoint()}/#{protocol}/#{network}"
+    url = "#{endpoint()}/#{protocol}/#{network}/status"
     with {:ok, resp} <- request(:get, url, %{}, client) do
       {:ok, to_struct(resp["result"], HDStatus)}
     end
