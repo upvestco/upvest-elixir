@@ -39,22 +39,35 @@ defmodule Upvest.Utils do
     symbol: "AR"
   }
   """
-  @spec to_struct(list() | Enum.t(), module() | struct()) :: struct()
-  def to_struct(data, module) when is_list(data) do
-    Enum.map(data, &to_struct(&1, module))
+  @spec to_struct(Enum.t(), struct(), boolean) :: struct()
+  def to_struct(data, module, camel \\ false) do
+    if is_list(data) do
+      Enum.map(data, &transform(&1, module, camel))
+    else
+      transform(data, module, camel)
+    end
   end
 
-  def to_struct(data, module) do
+  def transform(data, module, camel \\ false) do
     struct = struct(module)
 
     Enum.reduce(Map.to_list(struct), struct, fn {k, _}, acc ->
-      case Map.fetch(data, Atom.to_string(k)) do
+      camelKey = camelize(k, camel)
+      
+      case Map.fetch(data, camelKey) do
         {:ok, v} -> %{acc | k => v}
         :error -> acc
       end
     end)
   end
 
+  defp camelize(key, false), do: "#{key}"
+  defp camelize(key, _) do
+    with <<first::utf8, rest::binary>> <- Macro.camelize("#{key}") do
+      String.downcase(<<first::utf8>>) <> rest
+    end
+  end
+  
   @doc """
   Formats according the given string format specifier and returns the resulting string.
   The params argument needs to be List.

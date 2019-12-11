@@ -6,7 +6,7 @@ defmodule Upvest.WalletTest do
 
   doctest Upvest.Clientele.Wallet
 
-  @client new_test_client(:oauth)
+  @client new_clientele_client()
 
   @user_password System.get_env("UPVEST_TEST_PASSWORD")
 

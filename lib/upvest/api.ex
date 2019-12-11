@@ -27,14 +27,16 @@ defmodule Upvest.API do
   defmacro __using__(opts) do
     quote do
       import Upvest, only: [request: 4]
-      import Upvest.Utils, only: [to_struct: 2, sprintf: 2]
+      import Upvest.Utils, only: [to_struct: 2, to_struct: 3, sprintf: 2]
       alias Upvest.Client
       alias __MODULE__
 
-      @type t :: %__MODULE__{}
-
+      if :dry not in unquote(opts) do
+        @type t :: %__MODULE__{}
+      end
+      
       @page_size 100
-
+      
       if :create in unquote(opts) do
         @doc """
         Create a(n) #{__MODULE__ |> Module.split() |> List.last()}

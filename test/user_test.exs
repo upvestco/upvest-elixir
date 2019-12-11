@@ -6,7 +6,7 @@ defmodule Upvest.UsersTest do
 
   doctest Upvest.Tenancy.User
 
-  @client new_test_client(:key)
+  @client new_tenancy_client()
 
   setup_all do
     ts = timestamp()
