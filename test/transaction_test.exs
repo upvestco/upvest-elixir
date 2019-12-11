@@ -5,7 +5,7 @@ defmodule Upvest.TransactionTest do
 
   doctest Upvest.Clientele.Transaction
 
-  @client new_test_client(:oauth)
+  @client new_clientele_client()
 
   @user_password System.get_env("UPVEST_TEST_PASSWORD")
 

@@ -14,7 +14,7 @@ defmodule Upvest.TestHelper do
     |> to_string
   end
 
-  def new_test_client(:key) do
+  def new_tenancy_client() do
     api_key = System.get_env("API_KEY")
     api_secret = System.get_env("API_SECRET")
     api_passphrase = System.get_env("API_PASSPHRASE")
@@ -23,7 +23,7 @@ defmodule Upvest.TestHelper do
     Client.new(keyauth, @base_url)
   end
 
-  def new_test_client(:oauth) do
+  def new_clientele_client() do
     client_id = System.get_env("OAUTH2_CLIENT_ID")
     client_secret = System.get_env("OAUTH2_CLIENT_SECRET")
     username = System.get_env("UPVEST_TEST_USERNAME")

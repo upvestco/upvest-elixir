@@ -5,7 +5,7 @@ defmodule Upvest.AssetTest do
 
   doctest Upvest.Tenancy.Asset
 
-  @client new_test_client(:key)
+  @client new_tenancy_client()
 
   @arweave_asset %Asset{
     exponent: 12,

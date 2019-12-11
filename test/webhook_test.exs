@@ -5,7 +5,8 @@ defmodule Upvest.WebhookTest do
 
   doctest Upvest.Tenancy.Webhook
 
-  @client new_test_client(:key)
+  @client new_tenancy_client()
+  
   @webhook_url System.get_env("WEBHOOK_URL")
   @webhook_verification_url System.get_env("WEBHOOK_VERIFICATION_URL")
 
